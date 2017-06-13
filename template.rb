@@ -12,22 +12,20 @@ gem 'high_voltage'
 gem_group :development, :test do
   gem 'factory_girl_rails'
   gem 'faker'
-  gem 'poltergeist'
   gem 'launchy'
   gem 'guard-rspec'
   gem 'database_cleaner'
-  gem 'spring-commands-rspec'
-  gem 'faker'
 end
 
 gem_group :test do
   gem 'rspec-rails'
+  gem 'poltergeist'
   gem 'shoulda'
   gem 'capybara'
 end
 
 gem_group :development do
-  gem 'spirit_fingers'
+  # gem 'spirit_fingers'
   gem 'better_errors'
   gem 'meta_request'
   gem 'pry-toys'
@@ -35,7 +33,6 @@ gem_group :development do
   gem 'guard-livereload'
   gem 'terminal-notifier-guard'
   gem 'quiet_assets'
-  gem 'guard-ctags-bundler'
 end
 
 after_bundle do
