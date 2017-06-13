@@ -8,6 +8,7 @@ gem 'slim-rails'
 gem 'rack-mini-profiler'
 gem 'flamegraph'
 gem 'high_voltage'
+gem 'rack-timeout'
 
 gem_group :development, :test do
   gem 'factory_girl_rails'
@@ -22,6 +23,8 @@ gem_group :test do
   gem 'poltergeist'
   gem 'shoulda'
   gem 'capybara'
+  gem 'capybara-webkit'
+  gem 'timecop'
 end
 
 gem_group :development do
@@ -29,7 +32,8 @@ gem_group :development do
   gem 'better_errors'
   gem 'meta_request'
   gem 'pry-toys'
-  gem 'bullet'
+  # use bullet for DB
+  # gem 'bullet'
   gem 'guard-livereload'
   gem 'terminal-notifier-guard'
   gem 'quiet_assets'
