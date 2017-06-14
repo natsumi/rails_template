@@ -1,0 +1,19 @@
+# top-most EditorConfig file
+root = true
+
+# UTF-8 Charset, Unix-style newlines with a newline ending every file and no trailing whitespace
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# Ruby and YAML files get 2 space indentation
+[*.{rb,yml}]
+indent_style = space
+indent_size = 2
+
+# Tab indentation for front end files.
+[*.{js,json,scss,css,mustache,html}]
+indent_style = space
+indent_size = 4

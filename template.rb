@@ -66,6 +66,8 @@ after_bundle do
 
   copy_file 'Procfile'
   copy_file '.foreman'
+  copy_file '.eslintrc'
+  copy_file '.editorconfig'
 
 
   run 'yarn add slm-loader'
