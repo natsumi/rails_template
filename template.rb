@@ -43,7 +43,7 @@ after_bundle do
   # remove standard genearted files
   remove_file 'app/assets/stylesheets/application.css'
   remove_file 'app/assets/javascripts/application.js'
-  remove_file 'app/assets/javascript/pack/application.js'
+  remove_file 'app/assets/javascript/packs/application.js'
   remove_file 'app/views/layouts/application.html.erb'
 
   route "root to: 'high_voltage/pages#show', id: 'index'"
