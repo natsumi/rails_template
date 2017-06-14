@@ -2,12 +2,8 @@ doctype html
 html
   head
     title My New App
-    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true
-    = javascript_include_tag 'application', 'data-turbolinks-track' => true
+    = stylesheet_pack_tag 'application', media: 'all'
+    = javascript_pack_tag 'application'
     = csrf_meta_tags
   body
-    .col-md-3
-    .col-md-6
-      == yield
-    .col-md-3
-    = include_rails_script
+    == yield
