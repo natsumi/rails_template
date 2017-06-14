@@ -44,10 +44,8 @@ after_bundle do
   remove_file 'app/assets/stylesheets/application.css'
   remove_file 'app/assets/javascripts/application.js'
   remove_file 'app/views/layouts/application.html.erb'
-  # remove_file 'config/environments/development.rb'
 
-  # route "root to: 'static_pages#index'"
-  # generate :controller, 'StaticPages index --no-test-framework --no-assets --no-helper'
+  route "root to: 'high_voltage/pages#show', id: 'home'"
 
   # create spec files
   run 'rails generate rspec:install'
@@ -57,12 +55,14 @@ after_bundle do
 
   # copy application stubs
   directory 'spec'
-  # directory 'app'
-  # directory 'config'
+  directory 'app'
+  directory 'config'
 
   # create guardfile
   # run 'bundle exec guard init rspec'
   # run 'bundle exec guard init livereload'
+
+  copy_file 'Procfile'
 
   # inital git commit
   git :init

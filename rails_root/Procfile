@@ -1,0 +1,2 @@
+web: bundle exec rails s Puma
+webpacker: ./bin/webpack-dev-server
