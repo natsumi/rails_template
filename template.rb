@@ -41,9 +41,10 @@ end
 
 after_bundle do
   # remove standard genearted files
-  remove_file 'app/assets/stylesheets/application.css'
+  # remove_file 'app/assets/stylesheets/application.css'
   remove_file 'app/assets/javascripts/application.js'
-  remove_file 'app/assets/javascript/packs/application.js'
+  remove_file 'app/javascript/packs/application.js'
+  remove_file 'app/javascript/packs/app.vue'
   remove_file 'app/views/layouts/application.html.erb'
 
   route "root to: 'high_voltage/pages#show', id: 'index'"
@@ -65,6 +66,10 @@ after_bundle do
 
   copy_file 'Procfile'
   copy_file '.foreman'
+
+
+  run 'yarn add slm-loader'
+  run 'yarn add pug-loader'
 
   # inital git commit
   git :init
