@@ -45,7 +45,7 @@ after_bundle do
   remove_file 'app/assets/javascripts/application.js'
   remove_file 'app/views/layouts/application.html.erb'
 
-  route "root to: 'high_voltage/pages#show', id: 'home'"
+  route "root to: 'high_voltage/pages#show', id: 'index'"
 
   # create spec files
   run 'rails generate rspec:install'
@@ -63,6 +63,7 @@ after_bundle do
   # run 'bundle exec guard init livereload'
 
   copy_file 'Procfile'
+  copy_file '.foreman'
 
   # inital git commit
   git :init

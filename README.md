@@ -7,5 +7,5 @@ Setups a new project using SASS / ES6 / Slim / Vue
 # Usage
 
 ```ruby
-rails new <project_name> -m <path_to_template.rb>
+rails new <project_name> --webpack=vue --skip-coffee --skip-turbolinks --skip-spring --skip-sprockets -m <path_to_template.rb>
 ```
