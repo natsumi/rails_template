@@ -69,7 +69,8 @@ after_bundle do
 
 
   run 'yarn add slm-loader'
-  run 'yarn add pug-loader'
+  run 'yarn add eslint eslint-config-airbnb --dev'
+  run 'yarn add prettier lint-staged husky --dev'
 
   # inital git commit
   git :init

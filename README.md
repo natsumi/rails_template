@@ -15,6 +15,19 @@ Remove excess packages from package.json (e.g. coffee-script loaders)
 Update package.json and specify node version and yarn versions
 { "engines" : { "node": "6.11.0", "yarn": "0.24.0" } }
 
+Prettier Config
+Add to package.json
+```json
+"scripts": {
+    "precommit": "lint-staged"
+},
+"lint-staged": {
+    "*.{js,es6}": [
+        "prettier --tab-width 4 --single-quote --trailing-comma es5 --color --write",
+        "git add"
+    ]
+}
+````
 
 # Usage
 
