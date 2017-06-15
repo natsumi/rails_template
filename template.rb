@@ -46,6 +46,7 @@ after_bundle do
   remove_file 'app/javascript/packs/application.js'
   remove_file 'app/javascript/packs/app.vue'
   remove_file 'app/views/layouts/application.html.erb'
+  remove_file 'config/webpack/loaders/assets.js'
 
   route "root to: 'high_voltage/pages#show', id: 'index'"
 
