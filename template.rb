@@ -69,6 +69,7 @@ after_bundle do
   copy_file '.foreman'
   copy_file '.eslintrc'
   copy_file '.editorconfig'
+  copy_file '.rubocop'
 
 
   run 'yarn add slm-loader'
