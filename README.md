@@ -22,7 +22,7 @@ Add to package.json
     "precommit": "lint-staged"
 },
 "lint-staged": {
-    "*.{js,es6}": [
+    "*.{js,es6,css,scss,sass}": [
         "prettier --tab-width 4 --single-quote --trailing-comma es5 --color --write",
         "git add"
     ]
