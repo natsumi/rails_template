@@ -94,11 +94,11 @@ after_bundle do
   copy_file '.eslintrc'
   copy_file '.editorconfig'
   copy_file '.rubocop.yml'
-  copy_file '.ruby-version'
+  create_file '.ruby-version'
 
   append_file '.ruby-version', RUBY_VERSION.to_s
 
-  run 'yarn add slm-loader'
+  run 'yarn add slm'
   run 'yarn add eslint eslint-config-airbnb --dev'
   run 'yarn add prettier lint-staged husky --dev'
 
