@@ -33,6 +33,7 @@ gem_group :development do
   gem 'better_errors'
   gem 'meta_request'
   gem 'pry-toys'
+  gem 'pp_sql'
   # use bullet for DB
   # gem 'bullet'
   gem 'guard-livereload'
