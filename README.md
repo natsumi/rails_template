@@ -25,6 +25,10 @@ Add to package.json
     "*.{js,es6}": [
         "prettier --tab-width 4 --single-quote --trailing-comma es5 --color --write",
         "git add"
+    ],
+    "*.{css,scss,sass}": [
+        "prettier --tab-width 2 --single-quote --color --write",
+        "git add"
     ]
 }
 ````

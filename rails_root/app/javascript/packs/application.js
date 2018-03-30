@@ -8,4 +8,5 @@
 // layout file, like app/views/layouts/application.html.erb
 
 import './index'
+
 console.log('Hello World from Webpacker')
