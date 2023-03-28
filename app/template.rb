@@ -11,8 +11,8 @@ end
 File.rename "app/views/layouts/application.html.erb", "app/views/layouts/base.html.erb"
 
 prepend_to_file "app/views/layouts/base.html.erb", <<~ERB
-<%# The "base" layout contains boilerplate common to *all* views. %>
-
+  <%# The "base" layout contains boilerplate common to *all* views. %>
+  
 ERB
 
 insert_into_file "app/views/layouts/base.html.erb", <<-ERB, after: "<head>"
@@ -37,8 +37,8 @@ ERB
 if install_vite?
   gsub_file "app/views/layouts/base.html.erb", /^.*<%= stylesheet_link_tag.*$/, ""
   gsub_file "app/views/layouts/base.html.erb",
-            /vite_javascript_tag 'application' %>/,
-            'vite_javascript_tag "application", "data-turbo-track": "reload" %>'
+    /vite_javascript_tag 'application' %>/,
+    'vite_javascript_tag "application", "data-turbo-track": "reload" %>'
 else
   insert_into_file "app/views/layouts/base.html.erb", <<-ERB, before: /^.*<%= stylesheet_link_tag.*$/
     <link rel="stylesheet" href="https://unpkg.com/@picocss/pico@latest/css/pico.min.css">
