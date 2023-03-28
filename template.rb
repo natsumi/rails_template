@@ -73,7 +73,7 @@ def apply_template!
       bundler-audit
       erb_lint
       rubocop
-      standardrb
+      standard
       sidekiq
       thor
     ]
@@ -122,10 +122,10 @@ def add_template_repository_to_source_path
     source_paths.unshift(tempdir = Dir.mktmpdir("rails-template-"))
     at_exit { FileUtils.remove_entry(tempdir) }
     git clone: [
-      "--quiet",
-      "https://github.com/natsumi/rails-template.git",
-      tempdir
-    ].map(&:shellescape).join(" ")
+          "--quiet",
+          "https://github.com/natsumi/rails-template.git",
+          tempdir
+        ].map(&:shellescape).join(" ")
 
     if (branch = __FILE__[%r{rails-template/(.+)/template.rb}, 1])
       Dir.chdir(tempdir) { git checkout: branch }
@@ -169,7 +169,7 @@ end
 def assert_postgresql
   return if /^\s*gem ['"]pg['"]/.match?(IO.read("Gemfile"))
   fail Rails::Generators::Error,
-    "This template requires PostgreSQL, but the pg gem isn’t present in your Gemfile."
+       "This template requires PostgreSQL, but the pg gem isn’t present in your Gemfile."
 end
 
 def git_repo_url
@@ -308,11 +308,11 @@ end
 def add_package_json_script(scripts)
   scripts.each do |name, script|
     run [
-      "npm",
-      "pkg",
-      "set",
-      "scripts.#{name.to_s.shellescape}=#{script.shellescape}"
-    ].join(" ")
+          "npm",
+          "pkg",
+          "set",
+          "scripts.#{name.to_s.shellescape}=#{script.shellescape}"
+        ].join(" ")
   end
 end
 
