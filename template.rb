@@ -57,8 +57,9 @@ def apply_template!
         File.rename("app/javascript", "app/frontend")
       end
       run_with_clean_bundler_env "bundle exec vite install"
-      run "yarn add -D autoprefixer sass tailwindcss @tailwindcss/typography @tailwindcss/forms @tailwindcss/aspect-ratio"
+      run "yarn add -D autoprefixer sass tailwindcss @tailwindcss/typography @tailwindcss/forms @tailwindcss/aspect-ratio vite-plugin-rails"
       copy_file "postcss.config.js"
+      remove_file "vite.config.ts"
       copy_file "vite.config.ts"
       copy_file "tailwind.config.js"
       apply "app/frontend/template.rb"
