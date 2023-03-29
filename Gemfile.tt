@@ -34,6 +34,7 @@ group :development do
   gem "bundler-audit", require: false
   gem "erb_lint", require: false
   gem "letter_opener"
+  gem "overcommit"
   gem "rubocop-capybara", require: false
   gem "rubocop-minitest", require: false
   gem "rubocop-performance", require: false

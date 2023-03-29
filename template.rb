@@ -57,8 +57,10 @@ def apply_template!
         File.rename("app/javascript", "app/frontend")
       end
       run_with_clean_bundler_env "bundle exec vite install"
-      run "yarn add -D autoprefixer sass tailwindcss"
+      run "yarn add -D autoprefixer sass tailwindcss @tailwindcss/typography @tailwindcss/forms @tailwindcss/aspect-ratio"
       copy_file "postcss.config.js"
+      copy_file "vite.config.ts"
+      copy_file "tailwind.config.js"
       apply "app/frontend/template.rb"
     end
 
@@ -78,8 +80,6 @@ def apply_template!
       thor
     ]
     run_with_clean_bundler_env "bundle binstubs #{binstubs.join(" ")} --force"
-
-    remove_file "Procfile.dev" unless File.exist?("bin/dev")
 
     template "rubocop.yml.tt", ".rubocop.yml"
     run_rubocop_autocorrections
@@ -250,7 +250,7 @@ def create_database_and_initial_migration
 end
 
 def add_yarn_start_script
-  return add_package_json_script(start: "bin/dev") if File.exist?("bin/dev")
+  return add_package_json_script(start: "bin/dev")
 
   procs = ["'bin/rails s -b 0.0.0.0'"]
   procs << "'bin/vite dev'" if File.exist?("bin/vite")
@@ -266,9 +266,6 @@ end
 
 def add_yarn_lint_and_run_fix
   packages = %w[
-    eslint
-    eslint-config-prettier
-    eslint-plugin-prettier
     eslint-plugin-tailwindcss
     postcss
     prettier
@@ -283,15 +280,14 @@ def add_yarn_lint_and_run_fix
     stylelint-scss
   ]
   add_package_json_script(
-    fix:
-      "npm run -- lint:js --fix && npm run -- lint:css --fix && npm lint:ruby --fix"
+    fix: "npm run -- fix:js && npm run -- fix:css && npm run fix:ruby --fix"
   )
   add_package_json_script(
     lint: "npm run lint:js && npm run lint:css && npm lint:ruby"
   )
   add_package_json_script(
     "lint:js":
-      "stale-dep && eslint 'app/{components,frontend,javascript}/**/*.{js,jsx}' | npx snazzy"
+      "stale-dep && standard 'app/{components,frontend,javascript}/**/*.{js,jsx}' | npx snazzy"
   )
   add_package_json_script(
     "lint:css":
@@ -299,6 +295,17 @@ def add_yarn_lint_and_run_fix
   )
   add_package_json_script(
     "lint:ruby": "stale-dep && bundle exec standardrb | npx snazzy"
+  )
+  add_package_json_script(
+    "fix:js":
+      "stale-dep && standard 'app/{components,frontend,javascript}/**/*.{js,jsx}' --fix | npx snazzy"
+  )
+  add_package_json_script(
+    "fix:css":
+      "stale-dep && stylelint 'app/{components,frontend,assets/stylesheets}/**/*.{css,scss}' --fix | npx snazzy"
+  )
+  add_package_json_script(
+    "fix:ruby": "stale-dep && bundle exec standardrb --fix| npx snazzy"
   )
   add_package_json_script(postinstall: "stale-dep -u")
   run_with_clean_bundler_env "yarn add #{packages.join(" ")}"
