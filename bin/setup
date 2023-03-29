@@ -2,13 +2,15 @@
 
 def setup!
   within_project_root do
-    run  "bundle check > /dev/null 2>&1 || bundle install"
-    run  "yarn install" if File.exist?("yarn.lock")
-    run  "overcommit --install" if overcommit_present?
-    copy "example.env", ".env.development"
+    run "bundle check > /dev/null 2>&1 || bundle install"
+    run "yarn install" if File.exist?("yarn.lock")
+    run "overcommit --install" if overcommit_present?
+    unless File.exist?(".env.development")
+      copy "example.env", ".env.development"
+    end
     test_local_env_contains_required_keys
-    run  "RAILS_ENV=test bin/rails db:drop db:create"
-    run  "SKIP_TEST_DATABASE=1  bin/rails tmp:create db:prepare db:seed"
+    run "RAILS_ENV=test bin/rails db:drop db:create"
+    run "SKIP_TEST_DATABASE=1  bin/rails tmp:create db:prepare db:seed"
   end
 end
 
@@ -26,15 +28,14 @@ end
 
 def overcommit_present?
   with_clean_bundler_env do
-    system("which overcommit > /dev/null 2>&1") && system("overcommit -v > /dev/null 2>&1")
+    system("which overcommit > /dev/null 2>&1") &&
+      system("overcommit -v > /dev/null 2>&1")
   end
 end
 
 def run(command)
   log(:blue, "run  #{command}")
-  with_clean_bundler_env do
-    system(command, exception: true)
-  end
+  with_clean_bundler_env { system(command, exception: true) }
 end
 
 def with_clean_bundler_env(&block)
@@ -55,12 +56,14 @@ def test_local_env_contains_required_keys
   log(:yellow, "test .env.development contents")
   missing = keys["example.env"] - keys[".env.development"]
   if missing.any?
-    die("Your .env.development file is missing #{missing.join(', ')}")
+    die("Your .env.development file is missing #{missing.join(", ")}")
   end
 end
 
-def log(color, message, out=$stdout)
-  out.puts(message.sub(/^(\S*)/) { HighLine::String.new($1).public_send(color) })
+def log(color, message, out = $stdout)
+  out.puts(
+    message.sub(/^(\S*)/) { HighLine::String.new($1).public_send(color) }
+  )
 end
 
 def die(message)

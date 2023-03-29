@@ -5,16 +5,17 @@ PreCommit:
   BundleCheck:
     enabled: true
 
+  # TODO: replace this with slim lint
   ErbLint:
     enabled: true
     required_executable: bundle
-    command: ["bundle", "exec", "erblint"]
-    include: "**/*.html.erb"
+    command: ['bundle', 'exec', 'erblint']
+    include: '**/*.html.erb'
 
-  EsLint:
+  StandardJS:
     enabled: true
     required_executable: npx
-    command: ["npx", "--no-install", "eslint", "-f", "compact"]
+    command: ['npx', '--no-install', 'standard', '-f', 'compact']
     include:
       - app/assets/**/*.js
       - app/assets/**/*.jsx
@@ -27,7 +28,7 @@ PreCommit:
 
   FixMe:
     enabled: true
-    keywords: ["FIXME"]
+    keywords: ['FIXME']
     exclude:
       - .overcommit.yml
 
@@ -37,16 +38,16 @@ PreCommit:
   RailsSchemaUpToDate:
     enabled: true
 
-  RuboCop:
+  StandardRuby:
     enabled: true
     required_executable: bundle
-    command: ["bundle", "exec", "rubocop"]
+    command: ['bundle', 'exec', 'standardrb']
     on_warn: fail
 
   Stylelint:
     enabled: true
     required_executable: npx
-    command: ["npx", "--no-install", "stylelint"]
+    command: ['npx', '--no-install', 'stylelint']
     include:
       - app/assets/**/*.css
       - app/assets/**/*.scss
@@ -60,10 +61,14 @@ PreCommit:
   TrailingWhitespace:
     enabled: true
     exclude:
-      - "**/db/structure.sql"
+      - '**/db/structure.sql'
 
   YarnCheck:
     enabled: true
+
+CommitMsg:
+  CapitalizedSubject:
+    enabled: false
 
 PostCheckout:
   ALL:

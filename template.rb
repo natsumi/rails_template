@@ -9,10 +9,7 @@ def apply_template!
   add_template_repository_to_source_path
 
   if install_vite?
-    self.options = options.merge(
-      css: nil,
-      skip_asset_pipeline: true
-    )
+    self.options = options.merge(css: nil, skip_asset_pipeline: true)
   end
 
   template "Gemfile.tt", force: true
@@ -29,6 +26,7 @@ def apply_template!
 
   copy_file "Thorfile"
   copy_file "Procfile"
+  copy_file "Procfile.dev"
   copy_file "package.json"
 
   apply "Rakefile.rb"
@@ -46,18 +44,23 @@ def apply_template!
     append_to_file ".gitignore", <<~IGNORE
 
       # Ignore application config.
-      /.env.development
       /.env.*local
 
       # Ignore locally-installed gems.
       /vendor/bundle/
+
+      yarn-error.log
     IGNORE
 
     if install_vite?
-      File.rename("app/javascript", "app/frontend") if File.exist?("app/javascript")
+      if File.exist?("app/javascript")
+        File.rename("app/javascript", "app/frontend")
+      end
       run_with_clean_bundler_env "bundle exec vite install"
-      run "yarn add autoprefixer sass @picocss/pico"
+      run "yarn add -D autoprefixer sass tailwindcss @tailwindcss/typography @tailwindcss/forms @tailwindcss/aspect-ratio"
       copy_file "postcss.config.js"
+      copy_file "vite.config.ts"
+      copy_file "tailwind.config.js"
       apply "app/frontend/template.rb"
     end
 
@@ -66,22 +69,31 @@ def apply_template!
     create_database_and_initial_migration
     run_with_clean_bundler_env "bin/setup"
 
-    binstubs = %w[brakeman bundler bundler-audit erb_lint rubocop sidekiq thor]
-    run_with_clean_bundler_env "bundle binstubs #{binstubs.join(' ')} --force"
-
-    remove_file "Procfile.dev" unless File.exist?("bin/dev")
+    binstubs = %w[
+      brakeman
+      bundler
+      bundler-audit
+      erb_lint
+      rubocop
+      standard
+      sidekiq
+      thor
+    ]
+    run_with_clean_bundler_env "bundle binstubs #{binstubs.join(" ")} --force"
 
     template "rubocop.yml.tt", ".rubocop.yml"
     run_rubocop_autocorrections
 
-    template "eslintrc.js", ".eslintrc.js"
-    template "prettierrc.js", ".prettierrc.js"
     template "stylelintrc.js", ".stylelintrc.js"
+    template "standard.yml", ".standard.yml"
+
     add_yarn_lint_and_run_fix
     add_yarn_start_script
     simplify_package_json_deps
 
-    append_to_file ".gitignore", "node_modules" unless File.read(".gitignore").match?(%{^/?node_modules})
+    unless File.read(".gitignore").match?("^/?node_modules")
+      append_to_file ".gitignore", "node_modules"
+    end
 
     run_with_clean_bundler_env "bundle lock --add-platform x86_64-linux"
 
@@ -105,15 +117,15 @@ require "shellwords"
 # invoked remotely via HTTP, that means the files are not present locally.
 # In that case, use `git clone` to download them to a local temporary dir.
 def add_template_repository_to_source_path
-  if __FILE__ =~ %r{\Ahttps?://}
+  if __FILE__.match?(%r{\Ahttps?://})
     require "tmpdir"
     source_paths.unshift(tempdir = Dir.mktmpdir("rails-template-"))
     at_exit { FileUtils.remove_entry(tempdir) }
     git clone: [
-      "--quiet",
-      "https://github.com/mattbrictson/rails-template.git",
-      tempdir
-    ].map(&:shellescape).join(" ")
+          "--quiet",
+          "https://github.com/natsumi/rails-template.git",
+          tempdir
+        ].map(&:shellescape).join(" ")
 
     if (branch = __FILE__[%r{rails-template/(.+)/template.rb}, 1])
       Dir.chdir(tempdir) { git checkout: branch }
@@ -128,8 +140,9 @@ def assert_minimum_rails_version
   rails_version = Gem::Version.new(Rails::VERSION::STRING)
   return if requirement.satisfied_by?(rails_version)
 
-  prompt = "This template requires Rails #{RAILS_REQUIREMENT}. "\
-           "You are using #{rails_version}. Continue anyway?"
+  prompt =
+    "This template requires Rails #{RAILS_REQUIREMENT}. " \
+      "You are using #{rails_version}. Continue anyway?"
   exit 1 if no?(prompt)
 end
 
@@ -154,13 +167,18 @@ def assert_valid_options
 end
 
 def assert_postgresql
-  return if IO.read("Gemfile") =~ /^\s*gem ['"]pg['"]/
-  fail Rails::Generators::Error, "This template requires PostgreSQL, but the pg gem isn’t present in your Gemfile."
+  return if /^\s*gem ['"]pg['"]/.match?(IO.read("Gemfile"))
+  fail Rails::Generators::Error,
+       "This template requires PostgreSQL, but the pg gem isn’t present in your Gemfile."
 end
 
 def git_repo_url
   @git_repo_url ||=
-    ask_with_default("What is the git remote URL for this project?", :blue, "skip")
+    ask_with_default(
+      "What is the git remote URL for this project?",
+      :blue,
+      "skip"
+    )
 end
 
 def production_hostname
@@ -168,14 +186,18 @@ def production_hostname
     ask_with_default("Production hostname?", :blue, "example.com")
 end
 
-def gemfile_entry(name, version=nil, require: true, force: false)
+def gemfile_entry(name, version = nil, require: true, force: false)
   @original_gemfile ||= IO.read("Gemfile")
   entry = @original_gemfile[/^\s*gem #{Regexp.quote(name.inspect)}.*$/]
   return if entry.nil? && !force
 
-  require = (entry && entry[/\brequire:\s*([\S]+)/, 1]) || require
+  require = (entry && entry[/\brequire:\s*(\S+)/, 1]) || require
   version = (entry && entry[/, "([^"]+)"/, 1]) || version
-  args = [name.inspect, version&.inspect, ("require: false" if require != true)].compact
+  args = [
+    name.inspect,
+    version&.inspect,
+    ("require: false" if require != true)
+  ].compact
   "gem #{args.join(", ")}\n"
 end
 
@@ -200,15 +222,16 @@ def any_local_git_commits?
 end
 
 def run_with_clean_bundler_env(cmd)
-  success = if defined?(Bundler)
-              if Bundler.respond_to?(:with_original_env)
-                Bundler.with_original_env { run(cmd) }
-              else
-                Bundler.with_clean_env { run(cmd) }
-              end
-            else
-              run(cmd)
-            end
+  success =
+    if defined?(Bundler)
+      if Bundler.respond_to?(:with_original_env)
+        Bundler.with_original_env { run(cmd) }
+      else
+        Bundler.with_clean_env { run(cmd) }
+      end
+    else
+      run(cmd)
+    end
   unless success
     puts "Command failed, exiting: #{cmd}"
     exit(1)
@@ -216,7 +239,7 @@ def run_with_clean_bundler_env(cmd)
 end
 
 def run_rubocop_autocorrections
-  run_with_clean_bundler_env "bin/rubocop -A --fail-level A > /dev/null || true"
+  run_with_clean_bundler_env "bin/standardrb --fix --fail-level A > /dev/null || true"
   run_with_clean_bundler_env "bin/erblint --lint-all -a > /dev/null || true"
 end
 
@@ -227,25 +250,28 @@ def create_database_and_initial_migration
 end
 
 def add_yarn_start_script
-  return add_package_json_script(start: "bin/dev") if File.exist?("bin/dev")
+  return add_package_json_script(start: "bin/dev")
 
   procs = ["'bin/rails s -b 0.0.0.0'"]
   procs << "'bin/vite dev'" if File.exist?("bin/vite")
   procs << "bin/webpack-dev-server" if File.exist?("bin/webpack-dev-server")
 
-  add_package_json_script(start: "stale-dep && concurrently -i -k --kill-others-on-fail -p none #{procs.join(" ")}")
+  add_package_json_script(
+    start:
+      "stale-dep && concurrently -i -k --kill-others-on-fail -p none #{procs.join(" ")}"
+  )
   add_package_json_script(postinstall: "stale-dep -u")
   run_with_clean_bundler_env "yarn add concurrently stale-dep"
 end
 
 def add_yarn_lint_and_run_fix
   packages = %w[
-    eslint
-    eslint-config-prettier
-    eslint-plugin-prettier
+    eslint-plugin-tailwindcss
     postcss
     prettier
+    snazzy
     stale-dep
+    standard
     stylelint
     stylelint-config-recommended-scss
     stylelint-config-standard
@@ -253,18 +279,47 @@ def add_yarn_lint_and_run_fix
     stylelint-prettier
     stylelint-scss
   ]
-  add_package_json_script("fix": "npm run -- lint:js --fix && npm run -- lint:css --fix")
-  add_package_json_script("lint": "npm run lint:js && npm run lint:css")
-  add_package_json_script("lint:js": "stale-dep && eslint 'app/{components,frontend,javascript}/**/*.{js,jsx}'")
-  add_package_json_script("lint:css": "stale-dep && stylelint 'app/{components,frontend,assets/stylesheets}/**/*.{css,scss}'")
-  add_package_json_script("postinstall": "stale-dep -u")
-  run_with_clean_bundler_env "yarn add #{packages.join(' ')}"
+  add_package_json_script(
+    fix: "npm run -- fix:js && npm run -- fix:css && npm run fix:ruby --fix"
+  )
+  add_package_json_script(
+    lint: "npm run lint:js && npm run lint:css && npm lint:ruby"
+  )
+  add_package_json_script(
+    "lint:js":
+      "stale-dep && standard 'app/{components,frontend,javascript}/**/*.{js,jsx}' | npx snazzy"
+  )
+  add_package_json_script(
+    "lint:css":
+      "stale-dep && stylelint 'app/{components,frontend,assets/stylesheets}/**/*.{css,scss}' | npx snazzy"
+  )
+  add_package_json_script(
+    "lint:ruby": "stale-dep && bundle exec standardrb | npx snazzy"
+  )
+  add_package_json_script(
+    "fix:js":
+      "stale-dep && standard 'app/{components,frontend,javascript}/**/*.{js,jsx}' --fix | npx snazzy"
+  )
+  add_package_json_script(
+    "fix:css":
+      "stale-dep && stylelint 'app/{components,frontend,assets/stylesheets}/**/*.{css,scss}' --fix | npx snazzy"
+  )
+  add_package_json_script(
+    "fix:ruby": "stale-dep && bundle exec standardrb --fix| npx snazzy"
+  )
+  add_package_json_script(postinstall: "stale-dep -u")
+  run_with_clean_bundler_env "yarn add #{packages.join(" ")}"
   run_with_clean_bundler_env "yarn fix"
 end
 
 def add_package_json_script(scripts)
   scripts.each do |name, script|
-    run ["npm", "pkg", "set", "scripts.#{name.to_s.shellescape}=#{script.shellescape}"].join(" ")
+    run [
+          "npm",
+          "pkg",
+          "set",
+          "scripts.#{name.to_s.shellescape}=#{script.shellescape}"
+        ].join(" ")
   end
 end
 
@@ -280,6 +335,7 @@ def simplify_package_json_deps
 end
 
 def install_vite?
-  options[:javascript] == "vite"
+  true
 end
+
 apply_template!
