@@ -1,4 +1,4 @@
-# Base off of mattbrictson/rails-template
+# [Forked from mattbrictson/rails-template](https://github.com/mattbrictson/rails-template)
 
 ## Description
 
@@ -11,7 +11,7 @@ documentation, and personal preferences, while still generally adhering to the
 
 This template currently works with:
 
-- Rails 7.0.x
+- Rails 7.1.rc1
 - Bundler 2.x
 - PostgreSQL
 
@@ -87,7 +87,6 @@ The template will perform the following steps:
   - [standardrb][standard_rb] – enforces Ruby code style
   - [standard js][standard_js] – enforces JS code style
   - [erblint][] – applies rubocop rules within html.erb files
-  - [syntax_suggest][] – easier troubleshooting of Ruby syntax errors
 - Security
   - [brakeman][] and [bundler-audit][] – detect security vulnerabilities
 - Testing
@@ -145,7 +144,6 @@ the well-organized and well-documented [Thor source code][thor] to learn more.
 [template.rb]: template.rb
 [thor]: https://github.com/erikhuda/thor
 [vite]: https://vite-ruby.netlify.app
-[syntax_suggest]: https://github.com/zombocom/syntax_suggest
 [good_migrations]: https://github.com/testdouble/good-migrations
 [capybara-lockstep]: https://github.com/makandra/capybara-lockstep
 [standard_js]: https://standardjs.com/

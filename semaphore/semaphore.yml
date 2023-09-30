@@ -3,7 +3,10 @@ name: CI
 agent:
   machine:
     type: e1-standard-2
-    os_image: ubuntu2004
+  os_image: ubuntu2004
+auto_cancel:
+  running:
+    when: "true"
 global_job_config:
   env_vars:
     - name: BUNDLE_CLEAN
