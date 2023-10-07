@@ -11,7 +11,7 @@ documentation, and personal preferences, while still generally adhering to the
 
 This template currently works with:
 
-- Rails 7.1.rc1
+- Rails 7.1
 - Bundler 2.x
 - PostgreSQL
 

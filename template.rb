@@ -1,6 +1,6 @@
 require "bundler"
 require "json"
-RAILS_REQUIREMENT = "~> 7.0.0".freeze
+RAILS_REQUIREMENT = "~> 7.1.0".freeze
 
 def apply_template!
   assert_minimum_rails_version
@@ -67,7 +67,7 @@ def apply_template!
 
     apply "app/template.rb"
 
-    create_database_and_initial_migration
+    add_initial_migrations
     run_with_clean_bundler_env "bin/setup"
 
     binstubs = %w[
@@ -244,10 +244,17 @@ def run_rubocop_autocorrections
   run_with_clean_bundler_env "bin/erblint --lint-all -a > /dev/null || true"
 end
 
-def create_database_and_initial_migration
-  return if Dir["db/migrate/**/*.rb"].any?
-  run_with_clean_bundler_env "bin/rails db:create"
-  run_with_clean_bundler_env "bin/rails generate migration initial_migration"
+def add_initial_migrations
+  migration_tasks = %w[
+    action_mailbox:install:migrations
+    action_text:install:migrations
+    active_storage:install
+  ]
+  all_tasks = rails_command("-T", capture: true).scan(/^\S+\s+(\S+)/).flatten
+  tasks_to_run = migration_tasks & all_tasks
+  tasks_to_run.each { |task| rails_command(task) }
+
+  run_with_clean_bundler_env "bin/rails generate migration initial_migration" unless Dir["db/migrate/**/*.rb"].any?
 end
 
 def add_yarn_start_script
@@ -268,6 +275,7 @@ end
 def add_yarn_lint_and_run_fix
   packages = %w[
     eslint-plugin-tailwindcss
+    npm-run-all
     postcss
     prettier
     snazzy
@@ -280,12 +288,10 @@ def add_yarn_lint_and_run_fix
     stylelint-prettier
     stylelint-scss
   ]
-  add_package_json_script(
-    fix: "npm run -- fix:js && npm run -- fix:css && npm run fix:ruby --fix"
-  )
-  add_package_json_script(
-    lint: "npm run lint:js && npm run lint:css && npm lint:ruby"
-  )
+  add_package_json_script("fix": "npm-run-all fix:**")
+  add_package_json_script("fix:js": "npm run -- lint:js --fix")
+  add_package_json_script("fix:css": "npm run -- lint:css --fix")
+  add_package_json_script("lint": "npm-run-all lint:**")
   add_package_json_script(
     "lint:js":
       "stale-dep && standard 'app/{components,frontend,javascript}/**/*.{js,jsx}' | npx snazzy"
