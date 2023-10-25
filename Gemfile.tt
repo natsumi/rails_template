@@ -24,7 +24,6 @@ gem 'slim-rails'
 
 group :production do
   gem "postmark-rails"
-  gem "sidekiq"
 end
 
 group :development do
@@ -49,7 +48,6 @@ group :development, :test do
   gem "byebug"
   gem "dotenv-rails"
   gem "factory_bot_rails"
-  gem "launchy"
   gem "pry-byebug"
   gem "pry-doc"
   gem "pry-rails"
