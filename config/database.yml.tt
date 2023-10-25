@@ -1,16 +1,16 @@
 default: &default
-  adapter: postgresql
-  encoding: unicode
+  adapter: sqlite3
   pool: <%%= [5, *ENV.values_at("RAILS_MAX_THREADS")].map(&:to_i).max %>
+  timeout: 5000
 
 development:
   <<: *default
-  database: <%= app_name %>_development
+  database: storage/development.sqlite3
 
 test:
   <<: *default
-  database: <%= app_name %>_test
+  database: storage/test.sqlite3
 
 production:
   <<: *default
-  url: <%%= ENV["DATABASE_URL"] %>
+  database: storage/production.sqlite3
