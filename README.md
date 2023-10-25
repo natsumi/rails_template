@@ -74,7 +74,6 @@ The template will perform the following steps:
 
 - Core
   - [active_type][] – for building simple and effective form/service objects
-  - [sidekiq][] – Redis-based job queue implementation for Active Job
   - [slim][slim] – Slim Templating engine
 - Configuration
   - [dotenv][] – for local configuration
@@ -127,7 +126,6 @@ template are Thor’s `copy_file`, `template`, and `gsub_file`. You can dig into
 the well-organized and well-documented [Thor source code][thor] to learn more.
 
 [active_type]: https://github.com/makandra/active_type
-[sidekiq]: http://sidekiq.org
 [dotenv]: https://github.com/bkeepers/dotenv
 [annotate]: https://github.com/ctran/annotate_models
 [amazing_print]: https://github.com/amazing-print/amazing_print
