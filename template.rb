@@ -1,11 +1,10 @@
 require "bundler"
 require "json"
-RAILS_REQUIREMENT = "~> 7.1.0".freeze
+RAILS_REQUIREMENT = "~> 7.1.1".freeze
 
 def apply_template!
   assert_minimum_rails_version
   assert_valid_options
-  assert_postgresql
   add_template_repository_to_source_path
 
   # handled by vite
@@ -64,7 +63,7 @@ def apply_template!
 
     apply "app/template.rb"
 
-    add_initial_migrations
+    create_database_and_initial_migration
     run_with_clean_bundler_env "bin/setup"
 
     binstubs = %w[
@@ -91,8 +90,6 @@ def apply_template!
     unless File.read(".gitignore").match?("^/?node_modules")
       append_to_file ".gitignore", "node_modules"
     end
-
-    run_with_clean_bundler_env "bundle lock --add-platform x86_64-linux"
 
     unless any_local_git_commits?
       git checkout: "-b main"
@@ -161,12 +158,6 @@ def assert_valid_options
       fail Rails::Generators::Error, "Unsupported option: #{key}=#{actual}"
     end
   end
-end
-
-def assert_postgresql
-  return if /^\s*gem ['"]pg['"]/.match?(IO.read("Gemfile"))
-  fail Rails::Generators::Error,
-       "This template requires PostgreSQL, but the pg gem isn’t present in your Gemfile."
 end
 
 def git_repo_url
@@ -240,17 +231,10 @@ def run_rubocop_autocorrections
   run_with_clean_bundler_env "bin/erblint --lint-all -a > /dev/null || true"
 end
 
-def add_initial_migrations
-  migration_tasks = %w[
-    action_mailbox:install:migrations
-    action_text:install:migrations
-    active_storage:install
-  ]
-  all_tasks = rails_command("-T", capture: true).scan(/^\S+\s+(\S+)/).flatten
-  tasks_to_run = migration_tasks & all_tasks
-  tasks_to_run.each { |task| rails_command(task) }
-
-  run_with_clean_bundler_env "bin/rails generate migration initial_migration" unless Dir["db/migrate/**/*.rb"].any?
+def create_database_and_initial_migration
+  return if Dir["db/migrate/**/*.rb"].any?
+  run_with_clean_bundler_env "bin/rails db:create"
+  run_with_clean_bundler_env "bin/rails generate migration initial_migration"
 end
 
 def add_yarn_start_script

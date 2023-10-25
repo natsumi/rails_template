@@ -7,8 +7,8 @@ gem "active_type"
 <%= gemfile_entry "bcrypt", force: true -%>
 <%= gemfile_entry "bootsnap" -%>
 gem "good_migrations"
-<%= gemfile_entry "pg" -%>
-gem "pgcli-rails"
+<%= gemfile_entry "sqlite3" -%>
+
 <%= gemfile_entry "puma" -%>
 gem "rack-canonical-host"
 gem "rails", "~> <%= Rails.version[/\d+\.\d+\.\d+/] %>"
@@ -17,6 +17,7 @@ gem "rails", "~> <%= Rails.version[/\d+\.\d+\.\d+/] %>"
 <%= gemfile_entry "turbo-rails" -%>
 <%= %Q{gem "vite_rails"\n} -%>
 
+gem 'litestack'
 gem 'slim-rails'
 
 group :production do
@@ -57,5 +58,4 @@ group :test do
   <%= gemfile_entry "selenium-webdriver" -%>
   gem "shoulda-context"
   gem "shoulda-matchers"
-  <%= gemfile_entry "webdrivers" -%>
 end

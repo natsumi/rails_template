@@ -5,11 +5,10 @@ def setup!
     run "bundle check > /dev/null 2>&1 || bundle install"
     run "yarn install" if File.exist?("yarn.lock")
     run "overcommit --install" if overcommit_present?
-    unless File.exist?(".env.development")
-      copy "example.env", ".env.development"
-    end
+    copy "example.env", ".env.development"
     test_local_env_contains_required_keys
-    # run "bin/rails tmp:create db:prepare"
+    run "bin/rails generate litestack:install"
+    run "bin/rails tmp:create db:prepare"
   end
 end
 
@@ -21,25 +20,27 @@ gemfile do
   gem "highline"
 end
 
-def within_project_root(&block)
-  Dir.chdir(File.expand_path("..", __dir__), &block)
+def within_project_root(&)
+  Dir.chdir(File.expand_path("..", __dir__), &)
 end
 
 def overcommit_present?
   with_clean_bundler_env do
-    system("which overcommit > /dev/null 2>&1") &&
-      system("overcommit -v > /dev/null 2>&1")
+    system("which overcommit > /dev/null 2>&1") && system("overcommit -v > /dev/null 2>&1")
   end
 end
 
 def run(command)
   log(:blue, "run  #{command}")
-  with_clean_bundler_env { system(command, exception: true) }
+  with_clean_bundler_env do
+    system(command, exception: true)
+  end
 end
 
-def with_clean_bundler_env(&block)
-  return block.call unless defined?(Bundler)
-  Bundler.with_clean_env(&block)
+def with_clean_bundler_env(&)
+  return yield unless defined?(Bundler)
+
+  Bundler.with_clean_env(&)
 end
 
 def copy(source, dest)
@@ -50,7 +51,7 @@ def copy(source, dest)
 end
 
 def test_local_env_contains_required_keys
-  keys = ->(f) { IO.readlines(f).map { |l| l[/^([^#\s][^=\s]*)/, 1] }.compact }
+  keys = ->(f) { File.readlines(f).filter_map { |l| l[/^([^#\s][^=\s]*)/, 1] } }
 
   log(:yellow, "test .env.development contents")
   missing = keys["example.env"] - keys[".env.development"]
@@ -60,9 +61,7 @@ def test_local_env_contains_required_keys
 end
 
 def log(color, message, out = $stdout)
-  out.puts(
-    message.sub(/^(\S*)/) { HighLine::String.new($1).public_send(color) }
-  )
+  out.puts(message.sub(/^(\S*)/) { HighLine::String.new($1).public_send(color) })
 end
 
 def die(message)
