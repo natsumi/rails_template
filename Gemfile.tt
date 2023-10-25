@@ -8,6 +8,7 @@ gem "active_type"
 <%= gemfile_entry "bootsnap" -%>
 gem "good_migrations"
 <%= gemfile_entry "sqlite3" -%>
+
 <%= gemfile_entry "puma" -%>
 gem "rack-canonical-host"
 gem "rails", "~> <%= Rails.version[/\d+\.\d+\.\d+/] %>"
