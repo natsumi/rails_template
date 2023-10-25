@@ -8,9 +8,8 @@ def apply_template!
   assert_postgresql
   add_template_repository_to_source_path
 
-  if install_vite?
-    self.options = options.merge(css: nil, skip_asset_pipeline: true)
-  end
+  # handled by vite
+  self.options = options.merge(css: nil, skip_asset_pipeline: true)
 
   template "Gemfile.tt", force: true
 
@@ -52,18 +51,16 @@ def apply_template!
       yarn-error.log
     IGNORE
 
-    if install_vite?
-      if File.exist?("app/javascript")
-        File.rename("app/javascript", "app/frontend")
-      end
-      run_with_clean_bundler_env "bundle exec vite install"
-      run "yarn add -D autoprefixer sass tailwindcss @tailwindcss/typography @tailwindcss/forms @tailwindcss/aspect-ratio vite-plugin-rails standard"
-      copy_file "postcss.config.js"
-      remove_file "vite.config.ts"
-      copy_file "vite.config.ts"
-      copy_file "tailwind.config.js"
-      apply "app/frontend/template.rb"
+    if File.exist?("app/javascript")
+      File.rename("app/javascript", "app/frontend")
     end
+    run_with_clean_bundler_env "bundle exec vite install"
+    run "yarn add -D autoprefixer sass tailwindcss @tailwindcss/typography @tailwindcss/forms @tailwindcss/aspect-ratio vite-plugin-rails standard"
+    copy_file "postcss.config.js"
+    remove_file "vite.config.ts"
+    copy_file "vite.config.ts"
+    copy_file "tailwind.config.js"
+    apply "app/frontend/template.rb"
 
     apply "app/template.rb"
 
@@ -77,7 +74,6 @@ def apply_template!
       erb_lint
       rubocop
       standard
-      sidekiq
       thor
     ]
     run_with_clean_bundler_env "bundle binstubs #{binstubs.join(" ")} --force"
@@ -339,10 +335,6 @@ def simplify_package_json_deps
 
   File.write("package.json", JSON.pretty_generate(package_json))
   run_with_clean_bundler_env "yarn install"
-end
-
-def install_vite?
-  true
 end
 
 apply_template!
