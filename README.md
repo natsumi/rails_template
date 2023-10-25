@@ -71,6 +71,7 @@ The template will perform the following steps:
 - Core
   - [active_type][] – for building simple and effective form/service objects
   - [slim][slim] – Slim Templating engine
+  - [litestack] - SQLite3 in production
 - Configuration
   - [dotenv][] – for local configuration
 - Style
@@ -122,22 +123,23 @@ template are Thor’s `copy_file`, `template`, and `gsub_file`. You can dig into
 the well-organized and well-documented [Thor source code][thor] to learn more.
 
 [active_type]: https://github.com/makandra/active_type
-[dotenv]: https://github.com/bkeepers/dotenv
-[annotate]: https://github.com/ctran/annotate_models
 [amazing_print]: https://github.com/amazing-print/amazing_print
-[rubocop]: https://github.com/bbatsov/rubocop
-[erblint]: https://github.com/Shopify/erb-lint
-[factory_bot_rails]: https://github.com/thoughtbot/factory_bot_rails
-[tailwind]: https://tailwindcss.com/
-[postmark]: http://postmarkapp.com
-[postmark-rails]: http://www.rubydoc.info/gems/postmark-rails/0.12.0
+[annotate]: https://github.com/ctran/annotate_models
+[application templates]: http://guides.rubyonrails.org/generators.html#application-templates
 [brakeman]: https://github.com/presidentbeef/brakeman
 [bundler-audit]: https://github.com/rubysec/bundler-audit
+[capybara-lockstep]: https://github.com/makandra/capybara-lockstep
+[dotenv]: https://github.com/bkeepers/dotenv
+[erblint]: https://github.com/Shopify/erb-lint
+[factory_bot_rails]: https://github.com/thoughtbot/factory_bot_rails
+[good_migrations]: https://github.com/testdouble/good-migrations
+[litestack]: https://github.com/oldmoe/litestack
+[postmark-rails]: http://www.rubydoc.info/gems/postmark-rails/0.12.0
+[postmark]: http://postmarkapp.com
+[rubocop]: https://github.com/bbatsov/rubocop
 [shoulda]: https://github.com/thoughtbot/shoulda
-[application templates]: http://guides.rubyonrails.org/generators.html#application-templates
+[standard_js]: https://standardjs.com/
+[tailwind]: https://tailwindcss.com/
 [template.rb]: template.rb
 [thor]: https://github.com/erikhuda/thor
 [vite]: https://vite-ruby.netlify.app
-[good_migrations]: https://github.com/testdouble/good-migrations
-[capybara-lockstep]: https://github.com/makandra/capybara-lockstep
-[standard_js]: https://standardjs.com/
