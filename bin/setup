@@ -7,6 +7,7 @@ def setup!
     run "overcommit --install" if overcommit_present?
     copy "example.env", ".env.development"
     test_local_env_contains_required_keys
+    run "bin/rails generate litestack:install"
     run "bin/rails tmp:create db:prepare"
   end
 end

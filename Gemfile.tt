@@ -16,6 +16,7 @@ gem "rails", "~> <%= Rails.version[/\d+\.\d+\.\d+/] %>"
 <%= gemfile_entry "turbo-rails" -%>
 <%= %Q{gem "vite_rails"\n} -%>
 
+gem 'litestack'
 gem 'slim-rails'
 
 group :production do
