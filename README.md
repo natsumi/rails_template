@@ -12,17 +12,17 @@ documentation, and personal preferences, while still generally adhering to the
 This template currently works with:
 
 - Rails 7.1
-- Bundler 2.x
-- PostgreSQL
+- Ruby 3.1 or newer
+- Node 18+
 
 ## Installation
 
 _Optional._
 
-To make this the default Rails application template on your system, create a `~/.railsrc` file with these contents:
+To make this the default Rails application template on your system, create a `~/.railsrc` file with these contents
 
 ```
--d postgresql
+-d sqlite3
 -m https://raw.githubusercontent.com/natsumi/rails-template/main/template.rb
 ```
 
@@ -40,12 +40,8 @@ To generate a Rails application using this template, pass the `-m` option to `ra
 
 ```
 rails new blog \
-  -d postgresql \
   -m https://raw.githubusercontent.com/mattbrictson/rails-template/main/template.rb
 ```
-
-_Remember that options must go after the name of the application._ The only
-database supported by this template is `postgresql`.
 
 If you’ve installed this template as your default (using `~/.railsrc` as
 described above), then all you have to do is run:
