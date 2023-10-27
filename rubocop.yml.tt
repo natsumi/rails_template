@@ -1,7 +1,6 @@
 require:
   - standard
   - rubocop-capybara
-  - rubocop-minitest
   - rubocop-performance
   - rubocop-rspec
   - rubocop-rails
