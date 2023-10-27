@@ -49,14 +49,15 @@ group :development, :test do
   gem "pry-doc"
   gem "pry-rails"
   gem "retest"
-  gem "rspec-rails"
-  gem "vcr"
 end
 
 group :test do
   <%= gemfile_entry "capybara" -%>
   gem "capybara-lockstep"
   <%= gemfile_entry "selenium-webdriver" -%>
+  gem "rspec-rails"
   gem "shoulda-context"
   gem "shoulda-matchers"
+  gem "vcr"
+  gem "webmock"
 end
