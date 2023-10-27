@@ -33,7 +33,7 @@ def apply_template!
   apply "semaphore/template.rb"
   apply "config/template.rb"
   apply "lib/template.rb"
-  apply "test/template.rb"
+  apply "spec/template.rb"
 
   git :init unless preexisting_git_repo?
   empty_directory ".git/safe"

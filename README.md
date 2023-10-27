@@ -88,7 +88,10 @@ The template will perform the following steps:
 - Testing
   - [capybara-lockstep][] – for more reliable browser testing
   - [factory_bot_rails][] – for easy setup of test data
+  - [retest][] – Autorun tests on file change
+  - [rspec][] – Testing frame
   - [shoulda][] – shortcuts for common ActiveRecord tests
+  - [vcr][] – HTTP mocking framework
 
 #### Postmark
 
@@ -136,10 +139,13 @@ the well-organized and well-documented [Thor source code][thor] to learn more.
 [litestack]: https://github.com/oldmoe/litestack
 [postmark-rails]: http://www.rubydoc.info/gems/postmark-rails/0.12.0
 [postmark]: http://postmarkapp.com
+[retest]: https://github.com/AlexB52/retest
+[rspec]: https://github.com/rspec/rspec-rails
 [rubocop]: https://github.com/bbatsov/rubocop
 [shoulda]: https://github.com/thoughtbot/shoulda
 [standard_js]: https://standardjs.com/
 [tailwind]: https://tailwindcss.com/
 [template.rb]: template.rb
 [thor]: https://github.com/erikhuda/thor
+[vcr]: https://github.com/vcr/vcr
 [vite]: https://vite-ruby.netlify.app
